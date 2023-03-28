@@ -3,8 +3,7 @@ from django.db import models
 
 
 class UserModel(AbstractUser):
-    location = models.CharField(max_length=100,null=True)
+    location = models.CharField(max_length=100, null=True)
+
     class Meta:
         db_table = "user"
-
-
