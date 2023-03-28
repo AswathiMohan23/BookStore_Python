@@ -14,4 +14,4 @@ class BookModel(models.Model):
         db_table = "book"
 
     def __str__(self):
-        return str(self.name)
+        return str(self.book_name)
