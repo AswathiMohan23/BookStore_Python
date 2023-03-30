@@ -1,7 +1,5 @@
 from django.db import models
 
-from user.models import UserModel
-
 
 class BookModel(models.Model):
     book_name = models.CharField(max_length=150)
