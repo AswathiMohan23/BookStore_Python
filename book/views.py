@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from book.models import BookModel, CartModel
+from book.models import BookModel
 from book.serializer import BookSerializer, CartSerializer
 
 
@@ -63,12 +63,10 @@ class BookOperations(APIView):
 class CartViews(APIView):
     def post(self, request):
         try:
-            request.data.update({'user': request.user})
-            cart_data=CartModel.objects.get(id=user.id,request=request.user)
-            print(cart_data.data)
-            serializer = CartSerializer(request.data,cart_data)
-            # print(serializer.data)
+            request.data.update({'user': request.user.id})
+            serializer = CartSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
+            serializer.save()
             return Response({"message": "book added to cart", "status": 200, "data": serializer.data},
                             status=status.HTTP_200_OK)
         except Exception as e:

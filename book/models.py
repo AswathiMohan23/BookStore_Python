@@ -1,5 +1,6 @@
 from django.db import models
 
+from BookStoreProject import settings
 from user.models import UserModel
 
 
@@ -9,24 +10,33 @@ class BookModel(models.Model):
     author = models.CharField(max_length=50)
     price = models.IntegerField()
     quantity = models.IntegerField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,default=True)
 
     class Meta:
-        db_table = "book"
+        db_table = "book_table"
 
     def __str__(self):
-        return str(self.book_name)
+        return self.book_name
 
 
 class CartModel(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # gives user object using user object attributes ca be accessed
+    book = models.ManyToManyField(BookModel, related_name='carts', through='CartItems')
 
     class Meta:
         db_table = "cart_table"
 
+    def __str__(self):
+        return str(self.user.username)
 
-class CartItemModel(models.Model):
-    book = models.ForeignKey(BookModel, on_delete=models.CASCADE)
-    cart = models.ForeignKey(CartModel, on_delete=models.CASCADE, related_name='cart_items')
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    quantity = models.IntegerField()
+
+class CartItems(models.Model):
+    books = models.ForeignKey(BookModel, on_delete=models.CASCADE)
+    cart = models.ForeignKey(CartModel, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = "item_table"
+
+    def __str__(self):
+        return str(self.cart)
