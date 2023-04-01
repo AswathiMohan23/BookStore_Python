@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from book.models import BookModel
+from book.models import BookModel, CartModel, CartItems
 from book.serializer import BookSerializer, CartSerializer
 
 
@@ -64,6 +64,7 @@ class CartViews(APIView):
     def post(self, request):
         try:
             request.data.update({'user': request.user.id})
+
             serializer = CartSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
