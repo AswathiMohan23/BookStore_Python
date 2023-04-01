@@ -82,3 +82,13 @@ class CartViews(APIView):
         except Exception as e:
             return Response({"message": e.args[0], "status": 400, "data": {}},
                             status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        try:
+            user_cart= CartModel.objects.get(user=request.user.id) # each user will only be having one cart so can use user id to delete a  cart
+            user_cart.delete()
+            return Response({"message": "cart deleted", "status": 200, "data": {}},
+                            status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": e.args[0], "status": 400, "data": {}},
+                            status=status.HTTP_400_BAD_REQUEST)
