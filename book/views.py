@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from book.models import BookModel, CartModel, CartItems
-from book.serializer import BookSerializer, CartSerializer
+from book.serializer import BookSerializer, CartSerializer, CartItemSerializer
 
 
 class BookOperations(APIView):
@@ -92,3 +92,4 @@ class CartViews(APIView):
         except Exception as e:
             return Response({"message": e.args[0], "status": 400, "data": {}},
                             status=status.HTTP_400_BAD_REQUEST)
+

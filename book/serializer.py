@@ -22,20 +22,24 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
+    book_details=serializers.SerializerMethodField()
     class Meta:
         model = CartModel
-        fields = ["id", "book", "user"]
+        fields = '__all__'
 
     def create(self, validated_data):
         user = validated_data.get('user')
-
         cart_list = CartModel.objects.filter(user=user)
         if not cart_list.exists():
             cart = CartModel.objects.create(user=user)
         else:
             cart = cart_list.first()  # returns the first item of an object.
         book = BookModel.objects.get(id=self.initial_data.get('book'))
-
         CartItems.objects.update_or_create(books=book, cart=cart,
                                            defaults={'quantity': self.initial_data.get('quantity')})
+        print(CartItems.books.book_name)
         return cart
+
+    def get_book_details(self,obj):
+        return f'{obj.book.values_list("book_name","price")}'
+
