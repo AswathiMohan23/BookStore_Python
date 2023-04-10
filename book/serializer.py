@@ -49,10 +49,11 @@ class CartSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     book_details = serializers.SerializerMethodField()
+    quantity_price = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderModel
-        fields = ["id","address", "orderDate", "user","book_details"]
+        fields = ["id", "address", "orderDate", "user", "book_details", "quantity_price"]
 
     def create(self, validated_data):
         user = validated_data.get('user')
@@ -61,7 +62,7 @@ class OrderSerializer(serializers.ModelSerializer):
             raise Exception("cart not found")
         cart = cart_list.first()
         cartitems = CartItems.objects.filter(cart=cart)
-        if cartitems.count()!=0:
+        if cartitems.count() != 0:
             order = OrderModel.objects.create(user=user, address=self.initial_data.get('address'))
             [OrderItems.objects.update_or_create(book=i.books, order=order, defaults={'quantity': i.quantity}) for i in
              cartitems]
@@ -71,11 +72,16 @@ class OrderSerializer(serializers.ModelSerializer):
         return order
 
     def get_book_details(self, obj):
-        dict_book = {}
-        total_price=0
-        [dict_book.update({"book_name":i.book_name, "price":i.price,"quantity":i.quantity}) for i in obj.book.all()]
-        for i in obj.book.all():
-            total_price=total_price+i.price
-        dict_book.update({"total_price":total_price})
-        return dict_book
+        book_list = []
+        [book_list.append(i.book_name) for i in obj.book.all()]
+        return book_list
 
+    def get_quantity_price(self, obj):
+        dict_book = {}
+        total_price = 0
+        total_qty = 0
+        for i in obj.book.all():
+            total_price = total_price + i.price
+            total_qty = total_qty + i.quantity
+        [dict_book.update({"total_quantity": total_qty, "total_price": total_price}) for i in obj.book.all()]
+        return dict_book
