@@ -52,7 +52,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderModel
-        fields = ["address", "orderDate", "book", "user","book_details"]
+        fields = ["id","address", "orderDate", "user","book_details"]
 
     def create(self, validated_data):
         user = validated_data.get('user')
@@ -71,7 +71,11 @@ class OrderSerializer(serializers.ModelSerializer):
         return order
 
     def get_book_details(self, obj):
-        print(obj.book.all())
         dict_book = {}
-        book_list = [dict_book.update({i.book_name: i.price}) for i in obj.book.all()]
+        total_price=0
+        [dict_book.update({"book_name":i.book_name, "price":i.price,"quantity":i.quantity}) for i in obj.book.all()]
+        for i in obj.book.all():
+            total_price=total_price+i.price
+        dict_book.update({"total_price":total_price})
         return dict_book
+

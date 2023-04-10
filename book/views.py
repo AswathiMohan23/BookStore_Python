@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from book.models import BookModel, CartModel
+from book.models import BookModel, CartModel, OrderModel, OrderItems
 from book.serializer import BookSerializer, CartSerializer, OrderSerializer
 from logger import set_logger
 
@@ -130,3 +130,28 @@ class OrderViews(APIView):
             return Response({"message": e.args[0], "status": 400, "data": {}},
                             status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self, request):
+        logging.info("order details retrieved")
+        try:
+            order_data = OrderModel.objects.filter(user=request.user)
+            serializer = OrderSerializer(order_data, many=True)
+            return Response({"message": "orders displayed", "status": 200, "data": serializer.data},
+                            status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logging.exception(e)
+            return Response({"message": e.args[0], "status": 400, "data": {}},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, order_id):
+        logging.info("order cancelled")
+        try:
+            order = OrderModel.objects.get(user=request.user.id,
+                                              id=order_id)  # order gets deleted from order_table and orderItems_table
+            order.delete()
+            return Response({"message": "order cancelled", "status": 200, "data": {}},
+                            status=status.HTTP_200_OK)
+        except Exception as e:
+            logging.exception(e)
+            return Response({"message": e.args[0], "status": 400, "data": {}},
+                            status=status.HTTP_400_BAD_REQUEST)
