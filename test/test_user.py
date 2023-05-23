@@ -67,11 +67,4 @@ class BookTest(TestSetUp):
         print(response.data.get("status"))
         self.assertEqual(response.data.get("status"), 400)
 
-    # def test_should_fail_if_any_of_the_input_fields_are_empty_(self):
-    #     token = self.get_admin_token()
-    #     self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
-    #     response = self.client.post(self.book_url, data=self.invalid_book, format='json')
-    #     print(response.data)
-    #     self.assertEqual(response.status_code, 400)
-    #
-    #
+
