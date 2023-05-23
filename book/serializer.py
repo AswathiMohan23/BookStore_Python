@@ -49,11 +49,11 @@ class CartSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     book_details = serializers.SerializerMethodField()
-    quantity_price = serializers.SerializerMethodField()
+    total_quantity_and_price = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderModel
-        fields = ["id", "address", "orderDate", "user", "book_details", "quantity_price"]
+        fields = ["id", "address", "orderDate", "user", "book_details", "total_quantity_and_price"]
 
     def create(self, validated_data):
         user = validated_data.get('user')
@@ -76,7 +76,7 @@ class OrderSerializer(serializers.ModelSerializer):
         [book_list.append(i.book_name) for i in obj.book.all()]
         return book_list
 
-    def get_quantity_price(self, obj):
+    def get_total_quantity_and_price(self, obj):
         dict_book = {}
         total_price = 0
         total_qty = 0
