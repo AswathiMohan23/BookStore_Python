@@ -1,4 +1,3 @@
-import json
 import logging
 
 from rest_framework import status
@@ -41,6 +40,7 @@ class BookOperations(APIView):
             return Response({"message": e.args[0], "status": 400, "data": {}},
                             status=status.HTTP_400_BAD_REQUEST)
 
+
     def put(self, request):
         logging.info("book edited")
         try:
@@ -55,6 +55,8 @@ class BookOperations(APIView):
             logging.exception(e)
             return Response({"message": e.args[0], "status": 400, "data": {}},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
 
     def delete(self, request, book_id):
         logging.info("book deleted")
